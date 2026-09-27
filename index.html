@@ -188,6 +188,16 @@
             box-shadow: 0 10px 24px rgba(44, 18, 26, 0.12);
             text-align: center;
         }
+        .hangman-game-panel {
+            width: 100%;
+            max-width: 1000px;
+            height: auto;
+            margin: 0 auto;
+        }
+        .hangman-game-panel .game-frame {
+            flex: 0 0 auto;
+            height: 560px;
+        }
         .game-panel-heading {
             flex: 0 0 auto;
             margin: 0 0 0.5rem;
@@ -206,6 +216,9 @@
         @media (max-width: 800px) {
             .love-game-layout {
                 grid-template-columns: minmax(0, 1fr);
+            }
+            .hangman-game-panel {
+                width: 100%;
             }
         }
 
@@ -717,7 +730,21 @@ You were never just someone I loved; you became a warmth in my heart that stayed
             </div>
         </section>
 
-        <section id="letterSection" class="max-w-4xl mx-auto px-4 py-10">
+        <section class="max-w-6xl mx-auto px-4 pt-2 pb-0">
+            <div class="game-panel hangman-game-panel" aria-labelledby="hangmanPanelTitle">
+                <div class="game-panel-heading">
+                    <h2 id="hangmanPanelTitle" class="font-serif text-2xl font-bold text-maroon-900">Hangman Quiz</h2>
+                </div>
+                <iframe
+                    id="hangmanGameFrame"
+                    src="hangman.html?embed=1"
+                    class="game-frame"
+                    title="Hangman birthday quiz game">
+                </iframe>
+            </div>
+        </section>
+
+        <section id="letterSection" class="max-w-4xl mx-auto px-4 pt-2 pb-10">
             <div class="bg-cream-50 border border-maroon-900/10 rounded-2xl p-6 md:p-12 shadow-xl relative overflow-hidden">
                 <div class="text-center mb-8">
                     <span class="text-maroon-600 text-xs uppercase font-semibold tracking-widest">Secret Envelope</span>
@@ -1323,8 +1350,8 @@ You were never just someone I loved; you became a warmth in my heart that stayed
             { title: "First Meeting", icon: "🧑‍🤝‍🧑", coords: [22.569223749859482, 88.35952181888912], desc: "Where it all began. Our first meeting, our first chapter." },
             { title: "Second Meeting", icon: "🧑‍🤝‍🧑", coords: [22.573144767569172, 88.35727169884294], desc: "Answer that changed everything and brought us one step closer." },
             { title: "First Date", icon: "🍽️", coords: [22.552182791649333, 88.35270991770008], desc: "Our first date at KFC — simple, sweet, and the beginning of so many beautiful memories together. ❤️🍗✨" },
-            { title: "Movie Date", icon: "🎬", coords: [22.565155981631868, 88.35906276527035], desc: "Our first movie date at Hind Fame - just you, me, and a beautiful memory that will always have a special place in our story. 🎬❤️", icon: "🎬" },
-            { title: "Birthday Date", icon: "🧁", coords: [22.59052412103017, 88.411957552925], desc: "Your first birthday date at SKY NOIR CAFE - just you, me, and our beautiful memory that will always have a special place in our story. 🧁❤️", icon: "🧁" },
+            { title: "Movie Date", icon: "🎬", coords: [22.565155981631868, 88.35906276527035], desc: "Our first movie date at HIND FAME — just you, me, and a beautiful memory that will always have a special place in our story. 🎬❤️", icon: "🎬" },
+            { title: "Birthday Date", icon: "🧁", coords: [22.59052412103017, 88.411957552925], desc: "Your first birthday date at SKY NOIR CAFE — just you, me, and our beautiful memory that will always have a special place in our story. 🧁❤️", icon: "🧁" },
             { title: "Simple Date", icon: "🥤", coords: [22.574325509163025, 88.36447742038551], desc: "Paramount nearest meeting - simple meeting moments together ❤️🥤", icon: "🥤" },
             { title: "Common Places", coords: [22.5331850849038, 88.34566947876141], desc: "Press to explore all the places we visited, enjoyed, and made beautiful memories together. ❤️", icon: "👫👩‍❤️‍👨" },
         ];
@@ -1345,7 +1372,8 @@ You were never just someone I loved; you became a warmth in my heart that stayed
             { coords: [22.582076017175314, 88.39121935864407], desc: "Kolkata Bazaar Shopping from Manicktala opposite to Haldiram. 🛍️👫👩‍❤️‍👨" },
             { coords: [22.5331850849038, 88.34566947876141], desc: "In Netaji Bhavan Metro - Just spending time together making ordinary moments feel special. ❤️🚇" },            
             { coords: [22.569622480138925, 88.43353897990856], desc: "OMG Cafe - Sitting and talking 👫🍛" },
-            { coords: [22.518404859018393, 88.34675809786934], desc: "At Flora Cafe - You gave me a sweet treat a beautiful after birthday moment celebration.  👫🍛" }
+            { coords: [22.52125914929217, 88.34710142061822], desc: "A special birthday treat from you at Flora Café, filled with love, happiness, and memories that will always be ours. ❤️👫🍛" },
+
         ];
 
         let commonPlaceIndex = 1;
@@ -1478,6 +1506,15 @@ You were never just someone I loved; you became a warmth in my heart that stayed
             commonPlaceIndex = (commonPlaceIndex + 1) % commonPlaces.length;
         }
         window.addEventListener('load', initMap);
+
+        const hangmanFrame = document.getElementById('hangmanGameFrame');
+        window.addEventListener('message', event => {
+            if (event.source !== hangmanFrame.contentWindow || event.data?.type !== 'hangman:resize') return;
+            const height = Number(event.data.height);
+            if (Number.isFinite(height)) {
+                hangmanFrame.style.height = `${Math.min(Math.max(height, 440), 1100)}px`;
+            }
+        });
 
         /* 8. Gift Coupons & Modal */
         function openGift(id, title, desc, emoji) {
